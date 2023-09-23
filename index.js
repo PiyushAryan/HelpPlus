@@ -100,7 +100,7 @@ app.get('/logout', (req, res, next) => {
     });
 });
 
-app.get('/receive', isLoggedIn, async (req, res) => {
+app.get('/receive', async (req, res) => {
     try {
         const author = req.user.id;
         const allItems = await Items.find();
@@ -112,7 +112,7 @@ app.get('/receive', isLoggedIn, async (req, res) => {
 });
 
 
-app.get('/donate', isLoggedIn, (req, res) => {
+app.get('/donate', (req, res) => {
     res.render('donate');
 })
 
@@ -155,14 +155,14 @@ app.post('/:id/Status', async (req, res) => {
     }
 });
 
-app.get('/showDetails/:id', isLoggedIn, async (req, res) => {
+app.get('/showDetails/:id', async (req, res) => {
     const id = req.params.id;
     // console.log(id);
     const details = await User.findById(id);
     res.render('showDetails', { details });
 })
 
-app.get('/profile', isLoggedIn, async (req, res) => {
+app.get('/profile', async (req, res) => {
     try {
         const id = req.user.id;
         const allItems = await Items.find({ author: id });
