@@ -31,7 +31,6 @@ const isLoggedIn = (req, res, next) => {
     next();
 }
 
-
 app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, '/view'))
 
@@ -72,18 +71,9 @@ app.post('/register', async (req, res, next) => {
         });
     } catch (error) {
         console.error(error);
-        res.redirect('/register'); 
+        res.redirect('/register');
     }
 });
-
-
-app.get('/login', (req, res) => {
-    res.render('login');
-})
-
-app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
-    res.redirect('/home');
-})
 
 app.get('/logout', (req, res, next) => {
     req.logout(function (err) {
@@ -94,10 +84,18 @@ app.get('/logout', (req, res, next) => {
     });
 });
 
+app.get('/login', (req, res) => {
+    res.render('login');
+})
+
+app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
+    res.redirect('/home');
+})
+
 app.get('/receive', isLoggedIn, async (req, res) => {
     try {
         const author = req.user.id;
-        const allItems = await Items.find({ author });
+        const allItems = await Items.find();
         res.render('receive', { allItems });
     } catch (error) {
         console.error('Error fetching items:', error);
@@ -128,7 +126,7 @@ app.post('/donate', isLoggedIn, async (req, res) => {
 app.post('/:id/Status', async (req, res) => {
     try {
         const doneeId = req.user.id;
-        const doneeUsername=req.user.username;
+        const doneeUsername = req.user.username;
         const id = req.params.id;
         const item = await Items.findOne({ _id: id });
         if (!item) {
@@ -136,7 +134,7 @@ app.post('/:id/Status', async (req, res) => {
         }
         item.status = true;
         item.doneeId = doneeId;
-        item.doneeUsername=doneeUsername;
+        item.doneeUsername = doneeUsername;
         await item.save();
         res.redirect('/receive');
     } catch (error) {
@@ -145,8 +143,14 @@ app.post('/:id/Status', async (req, res) => {
     }
 });
 
+app.get('/showDetails/:id', isLoggedIn, async (req, res) => {
+    const id = req.params.id;
+    // console.log(id);
+    const details = await User.findById(id);
+    res.render('showDetails', { details });
+})
 
-app.get('/profile/:id', isLoggedIn, async (req, res) => {
+app.get('/profile', isLoggedIn, async (req, res) => {
     try {
         const id = req.user.id;
         const allItems = await Items.find({ author: id });
