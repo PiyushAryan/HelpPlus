@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const app = express();
 const path = require('path');
-const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
-const mapBoxToken = 'pk.eyJ1IjoibXVuYWYxMDAwIiwiYSI6ImNsa2I0YnB5cDA4cHYzYm8wYW54dnU3cWMifQ.lwRg1gI5-BcLTmHPKPUmwQ';
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+//const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+//const mapBoxToken = 'pk.eyJ1IjoibXVuYWYxMDAwIiwiYSI6ImNsa2I0YnB5cDA4cHYzYm8wYW54dnU3cWMifQ.lwRg1gI5-BcLTmHPKPUmwQ';
+//const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const ejsMate = require('ejs-mate');
 
 const { v4: uuid4 } = require('uuid');
@@ -28,12 +28,12 @@ mongoose.connect('mongodb://127.0.0.1:27017/Donation', {
         console.log(err, "error");
     })
 
-const isLoggedIn = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return res.redirect('/login');
-    }
-    next();
-}
+// const isLoggedIn = (req, res, next) => {
+//     if (!req.isAuthenticated()) {
+//         return res.redirect('/login');
+//     }
+//     next();
+// }
 
 app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, '/view'))
@@ -99,7 +99,7 @@ app.post('/login', passport.authenticate('local', { failureFlash: true, failureR
     res.redirect('/home');
 })
 
-app.get('/receive', isLoggedIn, async (req, res) => {
+app.get('/receive', async (req, res) => {
     try {
         const author = req.user.id;
         const allItems = await Items.find();
@@ -111,11 +111,11 @@ app.get('/receive', isLoggedIn, async (req, res) => {
 });
 
 
-app.get('/donate', isLoggedIn, (req, res) => {
+app.get('/donate', (req, res) => {
     res.render('donate');
 })
 
-app.post('/donate', isLoggedIn, async (req, res) => {
+app.post('/donate', async (req, res) => {
     const { value, additionalInfo, location } = req.body;
     const geoData = await geocoder.forwardGeocode({
         query: location,
@@ -154,14 +154,14 @@ app.post('/:id/Status', async (req, res) => {
     }
 });
 
-app.get('/showDetails/:id', isLoggedIn, async (req, res) => {
+app.get('/showDetails/:id', async (req, res) => {
     const id = req.params.id;
     // console.log(id);
     const details = await User.findById(id);
     res.render('showDetails', { details });
 })
 
-app.get('/profile', isLoggedIn, async (req, res) => {
+app.get('/profile', async (req, res) => {
     try {
         const id = req.user.id;
         const allItems = await Items.find({ author: id });
