@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const app = express();
 const path = require('path');
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapBoxToken = 'pk.eyJ1IjoibXVuYWYxMDAwIiwiYSI6ImNsa2I0YnB5cDA4cHYzYm8wYW54dnU3cWMifQ.lwRg1gI5-BcLTmHPKPUmwQ';
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+const ejsMate = require('ejs-mate');
 
 const { v4: uuid4 } = require('uuid');
 const session = require('express-session');
@@ -33,11 +37,14 @@ const isLoggedIn = (req, res, next) => {
 
 app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, '/view'))
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(methodOverride('_methid'));
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(methodOverride('_method'));
+
 
 app.use(session({
     secret: 'secret',
@@ -109,10 +116,14 @@ app.get('/donate', isLoggedIn, (req, res) => {
 })
 
 app.post('/donate', isLoggedIn, async (req, res) => {
-    const { value, additionalInfo } = req.body;
+    const { value, additionalInfo, location } = req.body;
+    const geoData = await geocoder.forwardGeocode({
+        query: location,
+        limit: 1
+    }).send()
     const author = req.user.id;
     try {
-        const item = await Items.create({ donate: value, des: additionalInfo, author: author });
+        const item = await Items.create({ donate: value, des: additionalInfo, author: author, geometry: geoData.body.features[0].geometry, location: location });
         await item.save();
         //console.log('item:', item);
         res.redirect('/receive');
