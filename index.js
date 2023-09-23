@@ -62,8 +62,8 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async (req, res) => {
     try {
-        const { email, username, password } = req.body;
-        const user = new User({ email, username });
+        const { email, username, password, contact } = req.body;
+        const user = new User({ email, username, contact });
         const registeredUser = await User.register(user, password);
         req.login(registeredUser, err => {
             if (err) return next(err);
@@ -81,6 +81,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
     //let allLists = await lists.find({});
+  
     res.redirect('/home');
 })
 
@@ -118,10 +119,22 @@ app.post('/donate', isLoggedIn, async (req, res) => {
     }
 });
 
-app.get('/history/:id',async(req,res)=>{
-    const {id}=req.params;
-    const allItems=await Items.find({author:id});
-    res.render('history',{allItems});
+app.post('/:id/Status', async (req, res) => {
+    const contact = req.user.contact;
+    const id = req.params.id;
+    const item = await Items.findOne({ _id: id });
+    item.status = true;
+    item.contact = contact;
+    console.log(item);
+    item.save();
+    res.redirect('/receive');
+})
+
+app.get('/profile',isLoggedIn, async (req, res) => {
+    const id = req.user.id;
+    const allItems = await Items.find({ author: id });
+    const userDetails=await User.findById(id);
+    res.render('profile', {userDetails,allItems });
 })
 
 app.listen(3000, () => {

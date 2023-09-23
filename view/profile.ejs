@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    UserName: <%=userDetails.username%><br>
+    Phone No: <%=userDetails.contact%><br>
+    Email: <%=userDetails.email%><br>
+    <%for(items of allItems){%>
+        <%=items.donate%><br>
+            description: <%=items.des%>
+            Status: <%if(items.status){%>
+                Accepted by: <%=items.contact%>
+            <%}else{%>
+                 Not Accepted
+                <%}%><br>
+                <%}%>
+    <a href="/home">Home</a>            
+</body>
+</html>

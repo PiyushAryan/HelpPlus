@@ -6,6 +6,10 @@ const UserSchema = new Schema({
     email: {
         type: String,
         require: true,
+    },
+    contact:{
+        type:String,
+        require:true
     }
 });
 
