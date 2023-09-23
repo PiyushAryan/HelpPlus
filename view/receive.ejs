@@ -21,7 +21,8 @@
                                     <a href="/home">Home</a>
                                     <a href="donate">Donate</a>
                                     <script>
-                                        const mapToken = 'pk.eyJ1IjoibXVuYWYxMDAwIiwiYSI6ImNsa2I0YnB5cDA4cHYzYm8wYW54dnU3cWMifQ.lwRg1gI5-BcLTmHPKPUmwQ';
+                                        const mapToken='<%-process.env.MAPBOX_TOKEN %>';
+                                        //const mapToken = 'pk.eyJ1IjoibXVuYWYxMDAwIiwiYSI6ImNsa2I0YnB5cDA4cHYzYm8wYW54dnU3cWMifQ.lwRg1gI5-BcLTmHPKPUmwQ';
                                         const items ={features:<%- JSON.stringify(allItems) %>}
                                     </script>
                                     <script src="/mapbox.js"></script>

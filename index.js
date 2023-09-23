@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
@@ -15,18 +19,20 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const Items = require('./models/item');
 const flash = require('connect-flash');
+const MongoStore = require('connect-mongo');
 
-
-mongoose.connect('mongodb://127.0.0.1:27017/Donation', {
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/Donation'
+mongoose.connect(dbUrl, {
     serverSelectionTimeoutMS: 5000, // 5 seconds
     socketTimeoutMS: 45000,
 })
-    .then(() => {
-        console.log("connection open");
-    })
-    .catch(err => {
-        console.log(err, "error");
-    })
+    
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+    console.log("Database connected");
+});
+
 
 const isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -44,11 +50,37 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(methodOverride('_method'));
 
-app.use(session({
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
+
+store.on("error",function(e){
+    console.log("session error",e);
+})
+
+const sessionConfig = {
+    store,
+    name: 'session',
     secret: 'secret',
     resave: false,
-    saveUninitialized: false
-}));
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        expries: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+}
+app.use(session(sessionConfig))
+
+// app.use(session({
+//     secret: 'secret',
+//     resave: false,
+//     saveUninitialized: false
+// }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -67,8 +99,8 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', async (req, res, next) => {
+    const { email, username, password, contact } = req.body;
     try {
-        const { email, username, password, contact } = req.body;
         const user = new User({ email, username, contact });
         await User.register(user, password);
         passport.authenticate('local')(req, res, () => {
