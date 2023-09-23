@@ -75,12 +75,6 @@ const sessionConfig = {
     }
 }
 app.use(session(sessionConfig))
-
-// app.use(session({
-//     secret: 'secret',
-//     resave: false,
-//     saveUninitialized: false
-// }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -205,6 +199,8 @@ app.get('/profile', isLoggedIn, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 app.listen(3000, () => {
     console.log("connected at 3000");
