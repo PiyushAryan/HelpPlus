@@ -16,5 +16,13 @@
     "password": "^0.1.1",
     "session": "^0.1.0",
     "uuid": "^9.0.1"
-  }
+  },
+  "name": "helpplus",
+  "description": "",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC"
 }
