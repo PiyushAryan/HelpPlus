@@ -31,8 +31,10 @@ const isLoggedIn = (req, res, next) => {
     next();
 }
 
+
 app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, '/view'))
+
 app.use(methodOverride('_methid'));
 app.set('view engine', 'ejs');
 app.use(express.json());
