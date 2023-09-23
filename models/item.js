@@ -8,7 +8,16 @@ const donateSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-
+    status: {
+        type: Boolean,
+        default: false
+    },
+    doneeUsername:{
+        type:String,   
+    },
+    doneeId:{
+        type:String,
+    }
 });
 
 const Donate = mongoose.model('Donate', donateSchema);

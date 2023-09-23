@@ -62,27 +62,26 @@ app.get('/register', (req, res) => {
     res.render('register')
 })
 
-app.post('/register', async (req, res) => {
+app.post('/register', async (req, res, next) => {
     try {
-        const { email, username, password } = req.body;
-        const user = new User({ email, username });
-        const registeredUser = await User.register(user, password);
-        req.login(registeredUser, err => {
-            if (err) return next(err);
+        const { email, username, password, contact } = req.body;
+        const user = new User({ email, username, contact });
+        await User.register(user, password);
+        passport.authenticate('local')(req, res, () => {
+            res.redirect('/home');
         });
-        res.render('home',);
-    } catch (e) {
-        console.log(e);
-        res.redirect('/home');
+    } catch (error) {
+        console.error(error);
+        res.redirect('/register'); 
     }
-})
+});
+
 
 app.get('/login', (req, res) => {
     res.render('login');
 })
 
 app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
-    //let allLists = await lists.find({});
     res.redirect('/home');
 })
 
@@ -96,10 +95,15 @@ app.get('/logout', (req, res, next) => {
 });
 
 app.get('/receive', isLoggedIn, async (req, res) => {
-    const author = req.user.id;
-    let allItems = await Items.find({});
-    res.render('receive', { allItems });
-})
+    try {
+        const author = req.user.id;
+        const allItems = await Items.find({ author });
+        res.render('receive', { allItems });
+    } catch (error) {
+        console.error('Error fetching items:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 
 app.get('/donate', isLoggedIn, (req, res) => {
@@ -112,7 +116,7 @@ app.post('/donate', isLoggedIn, async (req, res) => {
     try {
         const item = await Items.create({ donate: value, des: additionalInfo, author: author });
         await item.save();
-        console.log('item:', item);
+        //console.log('item:', item);
         res.redirect('/receive');
     } catch (error) {
         console.error('Error creating list:', error);
@@ -120,11 +124,42 @@ app.post('/donate', isLoggedIn, async (req, res) => {
     }
 });
 
-app.get('/history/:id',async(req,res)=>{
-    const {id}=req.params;
-    const allItems=await Items.find({author:id});
-    res.render('history',{allItems});
-})
+
+app.post('/:id/Status', async (req, res) => {
+    try {
+        const doneeId = req.user.id;
+        const doneeUsername=req.user.username;
+        const id = req.params.id;
+        const item = await Items.findOne({ _id: id });
+        if (!item) {
+            return res.status(404).send('Item not found');
+        }
+        item.status = true;
+        item.doneeId = doneeId;
+        item.doneeUsername=doneeUsername;
+        await item.save();
+        res.redirect('/receive');
+    } catch (error) {
+        console.error('Error updating item:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+app.get('/profile/:id', isLoggedIn, async (req, res) => {
+    try {
+        const id = req.user.id;
+        const allItems = await Items.find({ author: id });
+        const userDetails = await User.findById(id);
+        if (!userDetails) {
+            return res.status(404).send('User not found');
+        }
+        res.render('profile', { userDetails, allItems });
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 app.listen(3000, () => {
     console.log("connected at 3000");

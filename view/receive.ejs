@@ -10,9 +10,18 @@
 <body>
     <h1>Receive</h1>
     <%for(items of allItems){%>
-        <%=items.donate%><br>
-            description: <%=items.des%>
-                <%}%>
+        <%if(!items.status){%>
+            <%=items.donate%><br>
+                description: <%=items.des%>
+                    <form action="/<%=items._id%>/Status" method="POST">
+                        <label for="Status">Status</label>
+                        <!-- <input type="radio" id="accept" name="accept"> -->
+                        <button>accept</button>
+                    </form>
+                    <%}%>
+                        <%}%>
+
+                        <a href="/home">Home</a>            
 </body>
 
 </html>
