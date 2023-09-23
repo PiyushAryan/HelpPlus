@@ -123,7 +123,7 @@ app.post('/login', passport.authenticate('local', { failureFlash: true, failureR
     res.redirect('/home');
 })
 
-app.get('/receive', isLoggedIn, async (req, res) => {
+app.get('/receive',isLoggedIn, async (req, res) => {
     try {
         const author = req.user.id;
         const allItems = await Items.find();
@@ -135,11 +135,11 @@ app.get('/receive', isLoggedIn, async (req, res) => {
 });
 
 
-app.get('/donate', isLoggedIn, (req, res) => {
+app.get('/donate',isLoggedIn, (req, res) => {
     res.render('donate');
 })
 
-app.post('/donate', isLoggedIn, async (req, res) => {
+app.post('/donate',isLoggedIn, async (req, res) => {
     const { value, additionalInfo, location } = req.body;
     const geoData = await geocoder.forwardGeocode({
         query: location,
@@ -158,7 +158,7 @@ app.post('/donate', isLoggedIn, async (req, res) => {
 });
 
 
-app.post('/:id/Status', async (req, res) => {
+app.post('/:id/Status',isLoggedIn, async (req, res) => {
     try {
         const doneeId = req.user.id;
         const doneeUsername = req.user.username;
@@ -178,14 +178,14 @@ app.post('/:id/Status', async (req, res) => {
     }
 });
 
-app.get('/showDetails/:id', isLoggedIn, async (req, res) => {
+app.get('/showDetails/:id',isLoggedIn, async (req, res) => {
     const id = req.params.id;
     // console.log(id);
     const details = await User.findById(id);
     res.render('showDetails', { details });
 })
 
-app.get('/profile', isLoggedIn, async (req, res) => {
+app.get('/profile',isLoggedIn, async (req, res) => {
     try {
         const id = req.user.id;
         const allItems = await Items.find({ author: id });
