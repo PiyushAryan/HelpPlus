@@ -13,11 +13,12 @@
         <%=items.donate%><br>
             description: <%=items.des%>
             Status: <%if(items.status){%>
-                Accepted by: <%=items.contact%>
+                Accepted by: <%=items.doneeUsername%>
+                <a href="/profile/<%=items.doneeId%>">Visit Profile</a>
             <%}else{%>
                  Not Accepted
                 <%}%><br>
-                <%}%>
+                <%}%>     
     <a href="/home">Home</a>            
 </body>
 </html>

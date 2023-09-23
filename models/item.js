@@ -12,7 +12,10 @@ const donateSchema = new Schema({
         type: Boolean,
         default: false
     },
-    contact:{
+    doneeUsername:{
+        type:String,   
+    },
+    doneeId:{
         type:String,
     }
 });
