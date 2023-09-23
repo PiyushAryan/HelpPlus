@@ -31,11 +31,6 @@ const isLoggedIn = (req, res, next) => {
     next();
 }
 
-
-<<<<<<< HEAD
-
-=======
->>>>>>> a8ea0571366041b11569cfc23ebcccc5337b129b
 app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, '/view'))
 
@@ -80,15 +75,6 @@ app.post('/register', async (req, res, next) => {
     }
 });
 
-
-app.get('/login', (req, res) => {
-    res.render('login');
-})
-
-app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
-    res.redirect('/home');
-})
-
 app.get('/logout', (req, res, next) => {
     req.logout(function (err) {
         if (err) {
@@ -97,6 +83,14 @@ app.get('/logout', (req, res, next) => {
         res.redirect('/home');
     });
 });
+
+app.get('/login', (req, res) => {
+    res.render('login');
+})
+
+app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
+    res.redirect('/home');
+})
 
 app.get('/receive', isLoggedIn, async (req, res) => {
     try {
