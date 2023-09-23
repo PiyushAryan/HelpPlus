@@ -11,9 +11,10 @@
     Email: <%=userDetails.email%><br>
     <%for(items of allItems){%>
         <%=items.donate%><br>
-            description: <%=items.des%>
+            description: <%=items.des%><br>
+            Location: <%=items.location%><br>
             Status: <%if(items.status){%>
-                Accepted by: <%=items.doneeUsername%>
+                Accepted<br>By: <%=items.doneeUsername%>
                 <a href="/showDetails/<%=items.doneeId%>">Visit Profile</a>
             <%}else{%>
                  Not Accepted

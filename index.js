@@ -35,8 +35,6 @@ const isLoggedIn = (req, res, next) => {
     next();
 }
 
-
-
 app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, '/view'))
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,6 +43,7 @@ app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(methodOverride('_method'));
+
 
 app.use(session({
     secret: 'secret',
@@ -82,15 +81,6 @@ app.post('/register', async (req, res, next) => {
     }
 });
 
-
-app.get('/login', (req, res) => {
-    res.render('login');
-})
-
-app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
-    res.redirect('/home');
-})
-
 app.get('/logout', (req, res, next) => {
     req.logout(function (err) {
         if (err) {
@@ -100,7 +90,15 @@ app.get('/logout', (req, res, next) => {
     });
 });
 
-app.get('/receive', async (req, res) => {
+app.get('/login', (req, res) => {
+    res.render('login');
+})
+
+app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
+    res.redirect('/home');
+})
+
+app.get('/receive', isLoggedIn, async (req, res) => {
     try {
         const author = req.user.id;
         const allItems = await Items.find();
@@ -112,7 +110,7 @@ app.get('/receive', async (req, res) => {
 });
 
 
-app.get('/donate', (req, res) => {
+app.get('/donate', isLoggedIn, (req, res) => {
     res.render('donate');
 })
 
@@ -155,14 +153,14 @@ app.post('/:id/Status', async (req, res) => {
     }
 });
 
-app.get('/showDetails/:id', async (req, res) => {
+app.get('/showDetails/:id', isLoggedIn, async (req, res) => {
     const id = req.params.id;
     // console.log(id);
     const details = await User.findById(id);
     res.render('showDetails', { details });
 })
 
-app.get('/profile', async (req, res) => {
+app.get('/profile', isLoggedIn, async (req, res) => {
     try {
         const id = req.user.id;
         const allItems = await Items.find({ author: id });
