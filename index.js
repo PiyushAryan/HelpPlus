@@ -95,7 +95,8 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.get('/', (req, res) => {
-    res.render('home');
+    const currentUser=req.isAuthenticated();
+    res.render('home',{currentUser});
 })
 
 app.get('/register', (req, res) => {
