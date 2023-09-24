@@ -3,6 +3,10 @@ nav {
     color: azure;
 }
 
-.btn{
+.btn {
     background-color: #176B87;
+}
+.btn-secondary, .btn-secondary:hover{
+    color: #333;
+    text-shadow: none;
 }
