@@ -108,7 +108,7 @@ app.post('/register', async (req, res, next) => {
         const user = new User({ email, username, contact });
         await User.register(user, password);
         passport.authenticate('local')(req, res, () => {
-            res.redirect('/home');
+            res.redirect('/');
         });
     } catch (error) {
         console.error(error);
@@ -121,7 +121,7 @@ app.get('/logout', (req, res, next) => {
         if (err) {
             return next(err);
         }
-        res.redirect('/home');
+        res.redirect('/');
     });
 });
 
@@ -130,7 +130,7 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
-    res.redirect('/home');
+    res.redirect('/');
 })
 
 app.get('/receive',isLoggedIn, async (req, res) => {
