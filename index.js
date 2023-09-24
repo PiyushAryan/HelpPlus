@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
-
+const PORT=process.env.PORT || 3000;
 const express = require('express');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
@@ -22,16 +22,26 @@ const flash = require('connect-flash');
 const MongoStore = require('connect-mongo');
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/Donation'
-mongoose.connect(dbUrl, {
-    serverSelectionTimeoutMS: 5000, // 5 seconds
-    socketTimeoutMS: 45000,
-})
+// mongoose.connect(dbUrl, {
+//     serverSelectionTimeoutMS: 5000, // 5 seconds
+//     socketTimeoutMS: 45000,
+// })
     
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-    console.log("Database connected");
-});
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error:"));
+// db.once("open", () => {
+//     console.log("Database connected");
+// });
+
+const connectDB = async () => {
+    try {
+      const conn = await mongoose.connect(dbUrl);
+      console.log(`MongoDB Connected: ${conn.connection.host}`);
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+  }
 
 
 const isLoggedIn = (req, res, next) => {
@@ -84,8 +94,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-app.get('/home', (req, res) => {
-    res.render('home');
+app.get('/', (req, res) => {
+    const currentUser=req.isAuthenticated();
+    res.render('home',{currentUser});
 })
 
 app.get('/register', (req, res) => {
@@ -98,7 +109,7 @@ app.post('/register', async (req, res, next) => {
         const user = new User({ email, username, contact });
         await User.register(user, password);
         passport.authenticate('local')(req, res, () => {
-            res.redirect('/home');
+            res.redirect('/');
         });
     } catch (error) {
         console.error(error);
@@ -111,7 +122,7 @@ app.get('/logout', (req, res, next) => {
         if (err) {
             return next(err);
         }
-        res.redirect('/home');
+        res.redirect('/');
     });
 });
 
@@ -120,7 +131,7 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), async (req, res) => {
-    res.redirect('/home');
+    res.redirect('/');
 })
 
 app.get('/receive',isLoggedIn, async (req, res) => {
@@ -200,8 +211,8 @@ app.get('/profile',isLoggedIn, async (req, res) => {
     }
 });
 
-
-
-app.listen(3000, () => {
-    console.log("connected at 3000");
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("listening for requests");
+    })
 })
