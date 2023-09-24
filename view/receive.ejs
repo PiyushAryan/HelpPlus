@@ -1,20 +1,46 @@
 <% layout('../layouts/boilerplate') %>
 
+
+
+
+
     <body>
-        <h1>Show</h1>
         <div id="map" style='width:100%;height:300px;'></div>
-        <%for(items of allItems){%>
-            <%if(!items.status){%>
-                <%=items.donate%><br>
-                    description: <%=items.des%><br>
-                        Location: <%=items.location%>
+        <div class="card">
+            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+              <a href="#!">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+              </a>
+            </div>
+            <div class="card-body">
+                <%for(items of allItems){%>
+                    <%if(!items.status){%>
+                        <h5 class="card-title">
+                            Type of Donation : <%=items.donate%><br>
+                                Location: <%=items.location%>
+                        </h5>
+
+                        <p class="card-text">
+                            description: <%=items.des%><br></p>
+
+                        <a href="#!" class="btn btn-info">
                             <form action="/<%=items._id%>/Status" method="POST">
                                 <label for="Status">Status</label>
                                 <!-- <input type="radio" id="accept" name="accept"> -->
-                                <button>accept</button>
+                                <button class="btn btn-outline-light btn-info">Accept</button>
                             </form>
-                            <%}%>
-                                <%}%>
+                        </a>
+                    <%}%>               
+                <%}%>
+            </div>
+            
+            </div>
+              
+
+        <!-- <h1>Show</h1> -->
+        
+        <!--  -->
+                
 
                                     <a href="/">Home</a>
                                     <a href="donate">Donate</a>

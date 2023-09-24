@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Details</title>
 </head>
+
 <body>
-    <%=details.username%><br>
-    <%=details.contact%><br>
-    <%=details.email%><br>
-    <a href="/">home</a>  
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">
+                <%=details.username%>
+            </h5>
+            <h6 class="card-subtitle mb-2">
+                <%=details.contact%>
+            </h6>
+            <p class="card-text">
+                <%=details.email%>
+            </p>
+            <a href="/" class="btn btn-primary">home</a>
+        </div>
+    </div>
 </body>
+
 </html>
