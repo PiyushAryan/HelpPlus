@@ -22,16 +22,26 @@ const flash = require('connect-flash');
 const MongoStore = require('connect-mongo');
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/Donation'
-mongoose.connect(dbUrl, {
-    serverSelectionTimeoutMS: 5000, // 5 seconds
-    socketTimeoutMS: 45000,
-})
+// mongoose.connect(dbUrl, {
+//     serverSelectionTimeoutMS: 5000, // 5 seconds
+//     socketTimeoutMS: 45000,
+// })
     
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-    console.log("Database connected");
-});
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error:"));
+// db.once("open", () => {
+//     console.log("Database connected");
+// });
+
+const connectDB = async () => {
+    try {
+      const conn = await mongoose.connect(dbUrl);
+      console.log(`MongoDB Connected: ${conn.connection.host}`);
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+  }
 
 
 const isLoggedIn = (req, res, next) => {
@@ -84,7 +94,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-app.get('/home', (req, res) => {
+app.get('/', (req, res) => {
     res.render('home');
 })
 
@@ -200,8 +210,8 @@ app.get('/profile',isLoggedIn, async (req, res) => {
     }
 });
 
-
-
-app.listen(PORT, () => {
-    console.log(`connected at ${PORT}`);
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("listening for requests");
+    })
 })
