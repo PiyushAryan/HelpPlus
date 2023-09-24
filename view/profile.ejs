@@ -3,24 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <title>Profile</title>
 </head>
 <body>
-    UserName: <%=userDetails.username%><br>
-    Phone No: <%=userDetails.contact%><br>
-    Email: <%=userDetails.email%><br>
-    <%for(items of allItems){%>
-        <%=items.donate%><br>
-            description: <%=items.des%><br>
-            Location: <%=items.location%><br>
-            Status: <%if(items.status){%>
-                Accepted<br>By: <%=items.doneeUsername%>
-                <a href="/showDetails/<%=items.doneeId%>">Visit Profile</a>
-            <%}else{%>
-                Not Accepted
-                <%}%><br>
-                <%}%>     
-    <a href="/">Home</a> 
+    <section class="vh-100" style="background-color: #9de2ff;">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-md-9 col-lg-7 col-xl-5">
+              <div class="card" style="border-radius: 15px;">
+                <div class="card-body p-6">
+                  <div class="d-flex text-black">
+                    <div class="flex-shrink-0">
+                      <img src="data:image/png;base64,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"
+                        alt="Generic placeholder image" class="img-fluid"
+                        style="width: 180px; border-radius: 10px;">
+                    </div>
+                    <div class="flex-grow-2 ms-1">
+                      <h5 class="mb-1">Username: <%=userDetails.username%><br></h5>
+                      <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
+                        style="background-color: #efefef;">
+                        <div>
+                          <p class="small text-muted mb-1">Mobile No: <%=userDetails.contact%><br></p>
+                        </div>
+                        <div class="px-3">
+                          <p class="small text-muted mb-1">Email Address: <%=userDetails.email%><br></p>
+                        </div>
+                        <div class="px-3" >
+                            <%for(items of allItems){%>
+                                <p class="small text-muted mb-1"><b>Type of Donation :</b> <%=items.donate%><br></p>
+
+                                    <p class="small text-muted mb-1"><b>Description :</b> <%=items.des%><br></p>
+                                    <p class="small text-muted mb-1"><b>Location: </b><%=items.location%><br></p>
+                                    <p class="small text-muted mb-1"><b>Status:</b> <%if(items.status){%></p>
+                                        Accepted<br>By: <%=items.doneeUsername%>
+                                        <a href="/showDetails/<%=items.doneeId%>">Visit Profile</a>
+                                    <%}else{%>
+                                        Not Accepted
+                                        <%}%><br>
+                                        <%}%> 
+                        </div>
+                      </div>
+                      <div class="d-flex pt-1">
+                        <a href="/showDetails/<%=items.doneeId%>">
+                            <button type="button" class="btn btn-outline-primary me-1 flex-grow-1">Visit Profile</button>
+                        </a>
+                        <a href="/">
+                        <button type="button" class="btn btn-primary flex-grow-1">Home</button>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
           
 </body>
 </html>
