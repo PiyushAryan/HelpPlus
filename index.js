@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
-
+const PORT=process.env.PORT || 3000;
 const express = require('express');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
@@ -202,6 +202,6 @@ app.get('/profile',isLoggedIn, async (req, res) => {
 
 
 
-app.listen(3000, () => {
-    console.log("connected at 3000");
+app.listen(PORT, () => {
+    console.log(`connected at ${PORT}`);
 })
